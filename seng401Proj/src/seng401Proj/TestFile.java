@@ -6,8 +6,11 @@ package seng401Proj;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam; 
-import javax.ws.rs.Produces; 
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
 import org.json.JSONException; 
 import org.json.JSONObject;
 
@@ -52,6 +55,7 @@ public class TestFile {
 		jsonObject.put("Attribution", att);
 		return Response.status(200).entity(response.getBody().toString()).build();
 	}
+	/*
 	@Path("getWeather")
 	@GET
 	@Produces("application/json")
@@ -65,6 +69,35 @@ public class TestFile {
 		String att = "Powered by Auroras.live";
 		jsonObject.put("Attribution", att);
 		return Response.status(200).entity(response.getBody().toString()).build();
+	}*/
+	
+	@Path("/")
+	@GET
+	@Produces({"application/json","images/png"})
+	public Response getType(@Context UriInfo info) throws JSONException, UnirestException {
+
+		// Get the type we will be working with. 
+		String type = info.getQueryParameters().getFirst("type");
+		
+		System.out.println("\n\nType = " + type);
+		
+		System.out.println("\n\nParameters = " + info.getQueryParameters());
+		
+		System.out.println("Get path: " + info.getPath());
+		
+		
+
+		switch (type) {
+	        case "weather": 	
+	        	return Weather.getWeather(info);
+	        case "images":
+	        	return Images.getImages(info);
+	        default:
+	        	JSONObject jsonObject = new JSONObject();
+	        	jsonObject.put("Message", "Hi!");
+				String result = jsonObject.toString();
+				return Response.status(200).entity(result).build();
+		}
 	}
 
 }
