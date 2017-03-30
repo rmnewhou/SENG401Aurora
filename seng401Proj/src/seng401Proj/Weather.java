@@ -1,4 +1,4 @@
-package seng401Proj;
+package seng401Aurora;
 
 
 
@@ -14,22 +14,37 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 public class Weather {
-
+	
 	public static Response getWeather(@Context UriInfo info) throws UnirestException{
 		
+			String restCall = "";
+			
 			String latitude = info.getQueryParameters().getFirst("lat");
 			String longitude = info.getQueryParameters().getFirst("long");
 			String forecast = info.getQueryParameters().getFirst("forecast");
 
+			System.out.println("lat = " + latitude);
+			System.out.println("long = " + longitude);
+			System.out.println("forecast = " + forecast);
 			
 			JSONObject jsonObject = new JSONObject();
-			
-			String restCall = "https://api.auroras.live/v1/?type=weather&lat=" 
-					+ latitude + "&long=" + longitude;
-			
-			if (forecast.equals("true")){		//Even if you put false, it displays forecast
-				restCall = restCall + "&forecast=" + forecast;
+			if (latitude != null && longitude != null){
+				restCall = "https://api.auroras.live/v1/?type=weather&lat=" 
+						+ latitude + "&long=" + longitude;
+
+			}else{
+				//Respond appropriately. 
 			}
+			
+			if(forecast != null){
+				if (forecast.equals("true")){		//Even if you put false, it displays forecast
+					System.out.println("Here 2");
+					restCall = restCall + "&forecast=" + forecast;
+				}
+			}
+
+			
+			System.out.println("Rest Call = " + restCall);
 			
 			HttpResponse<JsonNode> response = Unirest.get(restCall).asJson();
 										

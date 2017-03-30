@@ -1,4 +1,4 @@
-package seng401Proj;
+package seng401Aurora;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
