@@ -1,4 +1,4 @@
-package seng401Aurora;
+package seng401Proj;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
