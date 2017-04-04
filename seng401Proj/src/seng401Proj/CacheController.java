@@ -1,5 +1,8 @@
 package seng401Proj;
 
+import java.util.HashMap;
+
+
 public class CacheController {
 
     private static CacheController instance;
@@ -11,7 +14,9 @@ public class CacheController {
     private long imagesCachePeriod = 0;
     private long mapCachePeriod = 0;
     private long weatherCachePeriod = 0;
+    private long locationsCachePeriod = 0;
     private Cache cache;
+    private HashMap<String, Long> specialTimes = new HashMap<String, Long>();
     
     private CacheController(){
     	cache = new Cache();
@@ -26,7 +31,7 @@ public class CacheController {
     }
     
     public void clearCache(){
-    	
+    	clearCache();
     }
 
 	public long getAceCachePeriod() {
@@ -83,6 +88,14 @@ public class CacheController {
 
 	public void setWeatherCachePeriod(long weatherCachePeriod) {
 		this.weatherCachePeriod = weatherCachePeriod;
+	}
+	
+	public long getLocationsCachePeriod() {
+		return locationsCachePeriod;
+	}
+
+	public void setLocationsCachePeriod(long locationsCachePeriod) {
+		this.locationsCachePeriod = locationsCachePeriod;
 	}
 
 	public Cache getCache() {
