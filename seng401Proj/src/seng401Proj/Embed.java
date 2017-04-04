@@ -22,12 +22,12 @@ public class Embed {
 		// Required Params: Image: current, weather, Lat, Long. Lat long only required if Image = weather
 		//?type=embed&image=weather&lat=40.7813913&long=-73.976902
 		
-		String url = "https://api.auroras.live/v1/?type=embed";
+		String key = "https://api.auroras.live/v1/?type=embed";
 		if (info.getQueryParameters().getFirst("image").matches("current")){
 			
-			url = url + "&image=current";
+			key = key + "&image=current";
 			
-			HttpResponse<java.io.InputStream> response = Unirest.get(url).asBinary();
+			HttpResponse<java.io.InputStream> response = Unirest.get(key).asBinary();
 			return Response.status(200).entity(response.getBody()).type("image/png").build();
 				
 			
@@ -43,19 +43,19 @@ public class Embed {
 				float latitude = Float.valueOf(info.getQueryParameters().getFirst("lat"));
 				float longitude = Float.valueOf(info.getQueryParameters().getFirst("long"));
 				if((latitude >= -90 && latitude <= 90) && (longitude >= -180 && longitude <= 180)){	
-					url = url + "&image="+ info.getQueryParameters().getFirst("image") + "&lat=" + info.getQueryParameters().getFirst("lat") + "&long=" + info.getQueryParameters().getFirst("long");
-					HttpResponse<java.io.InputStream> response = Unirest.get(url).asBinary();
+					key = key + "&image="+ info.getQueryParameters().getFirst("image") + "&lat=" + info.getQueryParameters().getFirst("lat") + "&long=" + info.getQueryParameters().getFirst("long");
+					HttpResponse<java.io.InputStream> response = Unirest.get(key).asBinary();
 					return Response.status(200).entity(response.getBody()).type("image/png").build();
 				}
 			}
 			else{
-				return Response.status(404).build();
+				return Response.status(400).build();
 			}
 		}
 		
 		
 		
-		return Response.status(404).build();
+		return Response.status(400).build();
 
 	}
 

@@ -18,6 +18,9 @@ public class Map {
 		
 		
 		String id = info.getQueryParameters().getFirst("id");
+		String type = info.getQueryParameters().getFirst("type");
+		String noCachingParam = info.getQueryParameters().getFirst("no-caching");
+		
 		 String description = null;
 		 String latitude = null;
 		 String longitude = null;
@@ -51,9 +54,40 @@ public class Map {
 		String mapsize = "&zoom=10&size=400x400";
 		String marker = "&markers=color:red%7C" + latitude + "," + longitude;
 		String googleAPIKey = "&key=AIzaSyBbRMDcRJxulPRPVnPtbJYEvXv18CD3mco";
-		String googleMapsCall = googleMapsBase + center + mapsize + marker + googleAPIKey;
+		String key = googleMapsBase + center + mapsize + marker + googleAPIKey;
 		
-		HttpResponse<java.io.InputStream> mapsResponse = Unirest.get(googleMapsCall).asBinary();
-		return Response.status(200).entity(mapsResponse.getBody()).type("image/png").build();
+		if (noCachingParam != null && noCachingParam.equals("true")){
+			
+			// We still need to save to cache though. 
+			return getResponse(key, type);
+		}else{
+			
+			// Check to see if the response is already in the cache
+			Response response = CacheController.getInstance().getCache().getFromCacheMap(key);
+			if (response == null){
+				
+				response = getResponse(key, type);
+	
+				CacheController.getInstance().getCache().setCacheValue(key, response, type);
+				// Now response has been created, so return it. 
+				return response; 
+			}else{
+				// Response
+				return response;
+			}
+		}
+		
+	}
+	public static Response getResponse(String key, String type) throws UnirestException{
+	
+		HttpResponse<java.io.InputStream> mapsResponse = Unirest.get(key).asBinary();
+		
+		Response newResponse = Response.status(200).entity(mapsResponse.getBody()).type("image/png").build();
+		
+		// Save the response in the cache controller. 
+		CacheController.getInstance().getCache().setCacheValue(key, newResponse, type);
+		return newResponse;
+		
 	}
 }
+

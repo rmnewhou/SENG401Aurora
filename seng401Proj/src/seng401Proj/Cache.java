@@ -11,12 +11,20 @@ public class Cache {
 	
 	HashMap<String, CacheObject> cacheMap = new HashMap<String, CacheObject>();
 	
-	int cacheHit = 0;
-	int cacheMiss = 0;
+	public int cacheHit = 0;
+	public int cacheMiss = 0;
 	
 	public void cacheClear(){
 		specialHashMap.clear();	
 		cacheMap.clear();
+		cacheHit = 0;
+		cacheMiss = 0;
+	}
+	private void incCacheHit(){
+		cacheHit++;
+	}
+	private void incCacheMiss(){
+		cacheMiss++;
 	}
 	
 	public Response getFromSpecialHashMap(String key, long expiration){
@@ -25,13 +33,16 @@ public class Cache {
 			long currentTime = Instant.now().getEpochSecond();
 			if (specialHashMap.get(key).expirationTime < currentTime){
 				// Cache has expired, return null 
+				incCacheMiss(); 
 				return null;
 			}else{
 				// The Cache has not expired and still exists, so return the response
+				incCacheHit();
 				return specialHashMap.get(key).response;
 			}		
 		}
 		// Cache doesn't exist, return null
+		incCacheMiss();
 		return null;
 	}
 	public Response getFromCacheMap(String key){
@@ -39,13 +50,16 @@ public class Cache {
 			long currentTime = Instant.now().getEpochSecond();
 			if (cacheMap.get(key).expirationTime < currentTime){
 				// Cache has expired, return null 
+				incCacheMiss();
 				return null;
 			}else{
 				// The Cache has not expired and still exists, so return the response
+				incCacheHit();
 				return cacheMap.get(key).response;
 			}		
 		}
 		// Cache doesn't exist, return null
+		incCacheMiss();
 		return null;
 	}
 	
