@@ -11,7 +11,13 @@ public class Cache {
 	
 	HashMap<String, CacheObject> cacheMap = new HashMap<String, CacheObject>();
 	
+	int cacheHit = 0;
+	int cacheMiss = 0;
 	
+	public void cacheClear(){
+		specialHashMap.clear();	
+		cacheMap.clear();
+	}
 	
 	public Response getFromSpecialHashMap(String key, long expiration){
 		

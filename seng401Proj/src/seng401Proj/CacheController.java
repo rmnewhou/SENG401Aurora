@@ -30,7 +30,7 @@ public class CacheController {
     }
     
     public void clearCache(){
-    	
+    	clearCache();
     }
 
 	public long getAceCachePeriod() {
