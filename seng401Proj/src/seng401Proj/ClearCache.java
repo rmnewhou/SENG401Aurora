@@ -14,6 +14,9 @@ public class ClearCache {
 	public static Response clearCache() {
 		CacheController.getInstance().clearCache();
 		
+		CacheController.getInstance().getCache().cacheHit = 0;
+		CacheController.getInstance().getCache().cacheMiss = 0;
+		
 		String data = "Cache cleared!";
 		
 		return Response.status(200).entity(data).build();

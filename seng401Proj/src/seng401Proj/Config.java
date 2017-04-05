@@ -55,26 +55,5 @@ public class Config {
 	        	//Should be 400
 				return Response.status(400).build();
 		}
-		/*switch (type) {
-	        case "weather": 	
-	        	return Weather.getWeather(info);
-	        case "images":
-	        	return Images.getImages(info);
-	        case "ace":
-	        	return Ace.getAce(info);
-	        case "locations":
-	        	return Locations.getLocations(info);
-	        case "all":
-	        	return All.getAll(info);
-	        case "archive":
-	        	return Archive.getArchive(info);
-	        case "map":
-	        	return Map.getMap(info);
-	        case "embed":
-	        	return Embed.getEmbed(info);		// Will be implemented 
-*/	        	
-	        	
-	        
-			
 	}
 }
