@@ -135,24 +135,88 @@ Response response = null;
 				response = CacheController.getInstance().getCache().getFromCacheMap(key);
 				return response;
 				
-			case "Images":
-				CacheController.getInstance();
 				
-				return GetCache.getCacheContents(info);
+				
+			/**
+			 * My work begins here 
+			 */
+			case "Images":
+				action = info.getQueryParameters().getFirst("action");
+				image = info.getQueryParameters().getFirst("image");
+				    
+				key = "http://api.auroras.live/v1/?type=images";
+				if (action != null){
+					if (action.equals("list")){
+						key += "&action=" + action;
+					}
+				}
+				
+				if (image != null){
+					key += "&image=" + image;
+				}
+				
+				response = CacheController.getInstance().getCache().getFromCacheMap(key);
+				return response;
 				
 			case "Map":
-				CacheController.getInstance();
+				// not sure about this one
 				
-				return GetCache.getCacheContents(info);
+				String id = info.getQueryParameters().getFirst("id");
+				String description = "";
+				String latitude = "";
+				String longitude = "";
+				
+				 
+				key = "https://api.auroras.live/v1/?type=locations"
+				response = CacheController.getInstance().getCache().getFromCacheMap(key);
+				JSONArray jsonArray = new JSONArray();
+				jsonArray = response1.getBody().getArray();
+						 
+				for(int i = 0; i < jsonArray.length(); i++){
+					if (id != null && jsonArray.getJSONObject(i).get("id").equals(id)){
+						description = jsonArray.getJSONObject(i).getString("description");
+						latitude = jsonArray.getJSONObject(i).getString("lat");
+						longitude = jsonArray.getJSONObject(i).getString("long");
+					}
+				}
+				
+				description = description.replaceAll("\\s+","");
+			
+				String googleMapsBase = "https://maps.googleapis.com/maps/api/staticmap?";
+				String center = "center=" + description;
+				String mapsize = "&zoom=10&size=400x400";
+				String marker = "&markers=color:red%7C" + latitude + "," + longitude;
+				String googleAPIKey = "&key=AIzaSyBbRMDcRJxulPRPVnPtbJYEvXv18CD3mco";
+				String googleMapsCall = googleMapsBase + center + mapsize + marker + googleAPIKey;
+			
+				HttpResponse<java.io.InputStream> response2 = Unirest.get(googleMapsCall).asBinary();
+				return Response.status(200).entity(response2.getBody()).type("image/png").build();
 				
 			case "Weather":
-				CacheController.getInstance();
+								
+				String latitude = info.getQueryParameters().getFirst("lat");
+				String longitude = info.getQueryParameters().getFirst("long");
+				String forecast = info.getQueryParameters().getFirst("forecast");
 				
-				return GetCache.getCacheContents(info);
+				if (latitude != null && longitude != null){
+					key = "https://api.auroras.live/v1/?type=weather&lat=" 
+							+ latitude + "&long=" + longitude;
+
+				}
+				
+				if(forecast != null){
+					if (forecast.equals("true")){
+						key += "&forecast=" + forecast;
+					}
+				}											
+			
+				response = CacheController.getInstance().getCache().getFromCacheMap(key);
+				return response;
 				
 			case "Locations":
-				
-				return GetCache.getCacheContents(info);
+				key = "https://api.auroras.live/v1/?type=locations";
+				response = CacheController.getInstance().getCache().getFromCacheMap(key);
+				return response;
 				
 			default:
         	//Should be 400
