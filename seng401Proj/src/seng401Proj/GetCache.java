@@ -2,7 +2,9 @@ package seng401Proj;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo; 
+import javax.ws.rs.core.UriInfo;
+
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.mashape.unirest.http.HttpResponse;
@@ -32,6 +34,7 @@ String weather = "";
 String action = "";
 String startDate = "";
 String endDate = "";
+String image = "";
 
 Response response = null;
 
@@ -163,40 +166,20 @@ Response response = null;
 				
 				String id = info.getQueryParameters().getFirst("id");
 				String description = "";
-				String latitude = "";
-				String longitude = "";
+				latitude = "";
+				longitude = "";
 				
 				 
-				key = "https://api.auroras.live/v1/?type=locations"
-				response = CacheController.getInstance().getCache().getFromCacheMap(key);
-				JSONArray jsonArray = new JSONArray();
-				jsonArray = response1.getBody().getArray();
-						 
-				for(int i = 0; i < jsonArray.length(); i++){
-					if (id != null && jsonArray.getJSONObject(i).get("id").equals(id)){
-						description = jsonArray.getJSONObject(i).getString("description");
-						latitude = jsonArray.getJSONObject(i).getString("lat");
-						longitude = jsonArray.getJSONObject(i).getString("long");
-					}
-				}
+				key = "https://api.auroras.live/v1/?type=maps" + "&id=" + id;
 				
-				description = description.replaceAll("\\s+","");
-			
-				String googleMapsBase = "https://maps.googleapis.com/maps/api/staticmap?";
-				String center = "center=" + description;
-				String mapsize = "&zoom=10&size=400x400";
-				String marker = "&markers=color:red%7C" + latitude + "," + longitude;
-				String googleAPIKey = "&key=AIzaSyBbRMDcRJxulPRPVnPtbJYEvXv18CD3mco";
-				String googleMapsCall = googleMapsBase + center + mapsize + marker + googleAPIKey;
-			
-				HttpResponse<java.io.InputStream> response2 = Unirest.get(googleMapsCall).asBinary();
-				return Response.status(200).entity(response2.getBody()).type("image/png").build();
+				response = CacheController.getInstance().getCache().getFromCacheMap(key);
+				return response;
 				
 			case "Weather":
 								
-				String latitude = info.getQueryParameters().getFirst("lat");
-				String longitude = info.getQueryParameters().getFirst("long");
-				String forecast = info.getQueryParameters().getFirst("forecast");
+				latitude = info.getQueryParameters().getFirst("lat");
+				longitude = info.getQueryParameters().getFirst("long");
+				forecast = info.getQueryParameters().getFirst("forecast");
 				
 				if (latitude != null && longitude != null){
 					key = "https://api.auroras.live/v1/?type=weather&lat=" 
