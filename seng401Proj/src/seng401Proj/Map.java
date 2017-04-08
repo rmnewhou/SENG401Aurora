@@ -1,11 +1,19 @@
 package seng401Proj;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.apache.http.entity.ByteArrayEntity;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.omg.CORBA.portable.InputStream;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
@@ -14,7 +22,7 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 public class Map {
 
-	public static Response getMap(@Context UriInfo info) throws UnirestException{
+	public static Response getMap(@Context UriInfo info) throws UnirestException, IOException{
 		
 		
 		String id = info.getQueryParameters().getFirst("id");
@@ -63,30 +71,41 @@ public class Map {
 		}else{
 			
 			// Check to see if the response is already in the cache
-			Response response = CacheController.getInstance().getCache().getFromCacheMap(key);
-			if (response == null){
-				
-				response = getResponse(key, type);
-	
-				CacheController.getInstance().getCache().setCacheValue(key, response, type);
-				// Now response has been created, so return it. 
-				return response; 
+			byte[] imageByteArr = CacheController.getInstance().getCache().getFromCacheMapImage(key);
+			if (imageByteArr == null){
+				// We need to get response from Aurora
+				return getResponse(key, type);
 			}else{
 				// Response
-				return response;
+				ByteArrayInputStream byteInputStream = new ByteArrayInputStream(imageByteArr); 
+				return Response.status(200).entity(byteInputStream).type("image/png").build();
 			}
 		}
 		
 	}
-	public static Response getResponse(String key, String type) throws UnirestException{
+	public static Response getResponse(String key, String type) throws UnirestException, IOException{
 	
-		HttpResponse<java.io.InputStream> mapsResponse = Unirest.get(key).asBinary();
+		HttpResponse<java.io.InputStream> auroraResponse = Unirest.get(key).asBinary();
 		
-		Response newResponse = Response.status(200).entity(mapsResponse.getBody()).type("image/png").build();
+		java.io.InputStream is = auroraResponse.getBody();
 		
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+	    int nRead;
+	    byte[] data = new byte[16384];
+	    while ((nRead = is.read(data, 0, data.length)) != -1) {
+	        buffer.write(data, 0, nRead);
+	    }
+	 
+	    buffer.flush();
+	    
+	    byte[] byteArray = buffer.toByteArray();
+	
 		// Save the response in the cache controller. 
-		CacheController.getInstance().getCache().setCacheValue(key, newResponse, type);
-		return newResponse;
+		CacheController.getInstance().getCache().setCacheValue(key, byteArray, type);
+		
+		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(byteArray); 
+		
+		return Response.status(200).entity(byteInputStream).type("image/png").build();
 		
 	}
 }

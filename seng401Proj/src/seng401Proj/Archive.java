@@ -42,8 +42,7 @@ public class Archive {
 			if (response == null){
 				
 				response = getResponse(key, type);
-	
-				CacheController.getInstance().getCache().setCacheValue(key, response, type);
+
 				// Now response has been created, so return it. 
 				return response; 
 			}else{

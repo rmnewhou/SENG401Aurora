@@ -1,5 +1,7 @@
 package seng401Proj;
 
+import java.io.IOException;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -21,7 +23,7 @@ public class RestInterpreter {
 		@Path("/")
 		@GET
 		@Produces({"application/json","images/png"})
-		public Response getType(@Context UriInfo info) throws JSONException, UnirestException {
+		public Response getType(@Context UriInfo info) throws JSONException, UnirestException, IOException {
 
 			// Get the type we will be working with. 
 			String type = info.getQueryParameters().getFirst("type");
