@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Properties;
+
+import javax.ws.rs.core.Response;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -35,13 +38,13 @@ public class ConfigFile {
 	        return instance;
 	    }
 	    
-	    public void saveToConfigFile() {
+	    public Response saveToConfigFile() {
 
     		BufferedWriter bw = null;
     		FileWriter fw = null;
+    		String content = "";
+    		
 	    	try {
-	    		String content = "";
-	    		
 	    		content = content + "AceCachePeriod: " + CacheController.getInstance().getAceCachePeriod() + "\n";
 	    		content = content + "AllCachePeriod: " + CacheController.getInstance().getAllCachePeriod() + "\n";
 	    		content = content + "ArchiveCachePeriod: " + CacheController.getInstance().getArchiveCachePeriod() + "\n";
@@ -54,6 +57,8 @@ public class ConfigFile {
 	    		fw = new FileWriter(FILENAME);
     			bw = new BufferedWriter(fw);
     			bw.write(content);
+    			
+    			
 	    	} catch (IOException e) {
 	    			e.printStackTrace();
 	    	} finally {
@@ -62,10 +67,15 @@ public class ConfigFile {
     					bw.close();
 	    			if (fw != null)
     					fw.close();
+	    			
+	    			String data = "Cache Configurations saved!\n" + content;
+	    			return Response.status(200).entity(data).build();
 	    		} catch (IOException ex) {
 	    				ex.printStackTrace();
 	    		}
 	    	}
+	    	System.out.println("Error 500");
+			return Response.status(500).build();
 	    }
 	    
 	    public void getFromConfigFile() {

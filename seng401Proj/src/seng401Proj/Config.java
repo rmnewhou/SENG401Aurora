@@ -53,6 +53,8 @@ public class Config {
 			case "cache_period":
 				System.out.println("Cache Period");
 				return CachePeriod.CachePeriod(info);
+			case "save_configurations":
+				return ConfigFile.getInstance().saveToConfigFile();
 		
 			default:
 	        	//Should be 400
