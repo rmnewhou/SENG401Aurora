@@ -37,7 +37,7 @@ public class Config {
 		String username = info.getQueryParameters().getFirst("login");
 		String password = info.getQueryParameters().getFirst("password");	
 		
-		if(!username.equals("admin") || password.equals("abc123"))
+		if(!username.equals("admin") || !password.equals("abc123"))
 			return Response.status(401).build();
 		
 		if(config == null)
