@@ -22,7 +22,7 @@ public class Config {
 	
 	
 	
-	@Path("/config")
+	@Path("/")
 	@GET
 	@Produces({"application/json","images/png"})
 	public Response getType(@Context UriInfo info) throws JSONException, UnirestException {
@@ -45,14 +45,19 @@ public class Config {
 
 		switch (config) {
 			case "clear_cache":
+				System.out.println("Clear cache");
 				return ClearCache.clearCache();
 			case "get_cache_contents":
+				System.out.println("Get cache");
 				return GetCache.getCacheContents(info);
 			case "cache_period":
+				System.out.println("Cache Period");
 				return CachePeriod.CachePeriod(info);
 		
 			default:
 	        	//Should be 400
+				System.out.println("Config = " + config);
+				System.out.println("Error 400");
 				return Response.status(400).build();
 		}
 	}
