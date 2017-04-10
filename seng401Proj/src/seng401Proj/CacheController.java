@@ -27,12 +27,13 @@ public class CacheController {
         	System.out.println("Making new instance");
             instance = new CacheController();
             instance.cache = new Cache();
+            ConfigFile.getInstance().getFromConfigFile();
         }
         return instance;
     }
     
     public void clearCache(){
-    	clearCache();
+    	cache.cacheClear();
     }
 
 	public long getAceCachePeriod() {

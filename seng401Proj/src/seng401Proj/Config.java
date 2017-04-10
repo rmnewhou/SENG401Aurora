@@ -41,7 +41,7 @@ public class Config {
 			return Response.status(401).build();
 		
 		if(config == null)
-			return Response.status(404).build();
+			return Response.status(400).build();
 
 		switch (config) {
 			case "clear_cache":

@@ -17,14 +17,7 @@ public class ConfigFile {
 	
 	 private static ConfigFile instance;
 	    // Period should be treated as seconds. 0 implies no caching.
-	    private long aceCachePeriod = 0;
-	    private long allCachePeriod = 0;
-	    private long archiveCachePeriod = 0;
-	    private long embedCachePeriod = 0;
-	    private long imagesCachePeriod = 0;
-	    private long mapCachePeriod = 0;
-	    private long weatherCachePeriod = 0;
-	    private long locationsCachePeriod = 0;
+	 
 	    
 	    private ConfigFile() {
 	    	
