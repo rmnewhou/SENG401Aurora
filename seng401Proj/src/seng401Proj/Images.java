@@ -18,6 +18,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
+import com.sun.jersey.api.container.MappableContainerException;
 
 public class Images {
 
@@ -30,8 +31,6 @@ public class Images {
 		String noCachingParam = info.getQueryParameters().getFirst("no-caching");
 		
 		
-	
-			
 			
 		if (action!=null && action.equals("list"))
 		{
@@ -52,47 +51,47 @@ public class Images {
 	
 	private static Response getImage(@Context UriInfo info, String type, String noCachingParam) throws UnirestException, IOException{
 		String image = info.getQueryParameters().getFirst("image");
-		JSONArray jsonArray = new JSONArray();
-		HttpResponse<JsonNode> locationsResponse = Unirest.get("https://api.auroras.live/v1/?type=locations").asJson();
-		jsonArray = locationsResponse.getBody().getArray();
-		
-		
-		System.out.println("Going in");
-		for(int i = 0; i < jsonArray.length(); i++){
-			System.out.println("Not found yet");
-			if (jsonArray.getJSONObject(i).get("id").equals(image)){
-				System.out.println("found the location");
-				String key = "https://api.auroras.live/v1/?type=images";
-				key = key + "&image=" + image;
-				
-				if (noCachingParam != null && noCachingParam.equals("true")){
-					
-					// We still need to save to cache though. 
-					return getResponse(key, type);
-				}else{
+		System.out.println("image = " + image);
+		JSONObject jsonObj = new JSONObject();
+		HttpResponse<JsonNode> locationsResponse = Unirest.get("http://api.auroras.live/v1/?type=images&action=list").asJson();
+		jsonObj = locationsResponse.getBody().getObject();
 
-					// Check to see if the response is already in the cache
-					byte[] imageByteArr = CacheController.getInstance().getCache().getFromCacheMapImage(key);
-					if (imageByteArr == null){
+		try{
+			for(int i = 0; i < jsonObj.length(); i++){
+				if (jsonObj.getJSONObject("images").getJSONObject(image).get("id") != null && 
+						jsonObj.getJSONObject("images").getJSONObject(image).get("id").equals(image)){
+					String key = "https://api.auroras.live/v1/?type=images";
+					key = key + "&image=" + image;
+					
+					if (noCachingParam != null && noCachingParam.equals("true")){
 						
-						// We need to get response from Aurora
+						// We still need to save to cache though. 
 						return getResponse(key, type);
 					}else{
-						// Response
-						ByteArrayInputStream byteInputStream = new ByteArrayInputStream(imageByteArr); 
-						return Response.status(200).entity(byteInputStream).type("image/png").build();
+
+						// Check to see if the response is already in the cache
+						byte[] imageByteArr = CacheController.getInstance().getCache().getFromCacheMapImage(key);
+						if (imageByteArr == null){
+							
+							// We need to get response from Aurora
+							return getResponse(key, type);
+						}else{
+							// Response
+							ByteArrayInputStream byteInputStream = new ByteArrayInputStream(imageByteArr); 
+							return Response.status(200).entity(byteInputStream).type("image/png").build();
+						}
 					}
 				}
 			}
+		}catch(org.json.JSONException e){
+			System.out.println("Caught exception: " + e);
+			return Response.status(400).build();	
 		}
 		return Response.status(400).build();
-
-
 	}
 	private static Response getList(@Context UriInfo info, String type, String noCachingParam) throws UnirestException{
 		String action = info.getQueryParameters().getFirst("action");
 		if (action.equals("list")){	
-			System.out.println("Got in the action place");
 			String key = "https://api.auroras.live/v1/?type=images";
 			key = key + "&action=" + action;
 			
@@ -131,8 +130,8 @@ public class Images {
 					return response;
 				}
 			}
-		}
-		else{
+		}else{
+			System.out.println("Status code: 400");
 			return Response.status(400).build();
 		}
 		

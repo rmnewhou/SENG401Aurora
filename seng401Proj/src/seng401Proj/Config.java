@@ -15,14 +15,14 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
-@Path ("/")
+@Path ("/config")
 public class Config {
 	
 	
 	
 	
 	
-	@Path("/")
+	@Path("/config")
 	@GET
 	@Produces({"application/json","images/png"})
 	public Response getType(@Context UriInfo info) throws JSONException, UnirestException {

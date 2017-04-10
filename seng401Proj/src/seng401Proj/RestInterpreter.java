@@ -9,13 +9,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
+import org.json.JSONException;
+
 import com.mashape.unirest.http.exceptions.UnirestException;
 @Path ("/")
 public class RestInterpreter {
@@ -36,7 +32,7 @@ public class RestInterpreter {
 					return Response.status(404).build();
 				}
 
-			switch (type) {
+			switch (type) {  
 		        case "weather": 	
 		        	return Weather.getWeather(info);
 		        case "images":
@@ -52,9 +48,7 @@ public class RestInterpreter {
 		        case "map":
 		        	return Map.getMap(info);
 		        case "embed":
-		        	return Embed.getEmbed(info);		// Will be implemented 
-		        	
-		        	
+		        	return Embed.getEmbed(info);			        	
 		        default:
 		        	//Should be 400
 					return Response.status(400).build();

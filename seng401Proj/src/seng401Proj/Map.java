@@ -35,10 +35,9 @@ public class Map {
 		
 		JSONArray jsonArray = new JSONArray();
 		HttpResponse<JsonNode> locationsResponse = Unirest.get("https://api.auroras.live/v1/?type=locations").asJson();
-		System.out.println(locationsResponse.getBody().getArray());
 		jsonArray = locationsResponse.getBody().getArray();
 		if(id == null || id.equals("")){
-			return Response.status(404).build();
+			return Response.status(400).build();
 		}
 		for(int i = 0; i < jsonArray.length(); i++){
 			
@@ -51,8 +50,8 @@ public class Map {
 			
 		}
 		if (description == null){
-			//Also return a 404 response, because their id was not valid (no matches found)
-			return Response.status(404).build();
+			//Also return a status 400 response, because their id was not valid (no matches found)
+			return Response.status(400).build();
 
 		}
 		description = description.replaceAll("\\s+","");
@@ -80,7 +79,7 @@ public class Map {
 				ByteArrayInputStream byteInputStream = new ByteArrayInputStream(imageByteArr); 
 				return Response.status(200).entity(byteInputStream).type("image/png").build();
 			}
-		}
+		}	
 		
 	}
 	public static Response getResponse(String key, String type) throws UnirestException, IOException{

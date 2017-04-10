@@ -114,7 +114,6 @@ public class Cache {
 	        case "images":
 	        	obj.expirationTime = Instant.now().getEpochSecond() + CacheController.getInstance().getImagesCachePeriod();
 	        	cacheMap.put(key, obj);
-	        	System.out.println("cache = " + cacheMap.get(key).response);
 	        	break;
 	        case "ace":
 	        	obj.expirationTime = Instant.now().getEpochSecond() + CacheController.getInstance().getAceCachePeriod();
@@ -136,10 +135,6 @@ public class Cache {
 	        	obj.expirationTime = Instant.now().getEpochSecond() + CacheController.getInstance().getMapCachePeriod();
 	        	cacheMap.put(key, obj);
 	        	break;
-	        case "embed":
-	        	obj.expirationTime = Instant.now().getEpochSecond() + CacheController.getInstance().getEmbedCachePeriod();
-	        	cacheMap.put(key, obj);  	
-	        	break;
 
 		
 		}
@@ -157,6 +152,10 @@ public class Cache {
 	        case "map":
 	        	obj.expirationTime = Instant.now().getEpochSecond() + CacheController.getInstance().getMapCachePeriod();
 	        	cacheMap.put(key, obj);
+	        	break;
+	        case "embed":
+	        	obj.expirationTime = Instant.now().getEpochSecond() + CacheController.getInstance().getEmbedCachePeriod();
+	        	cacheMap.put(key, obj);  	
 	        	break;
 
 
