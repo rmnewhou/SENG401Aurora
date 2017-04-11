@@ -12,10 +12,8 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 
 public class ClearCache {
 	public static Response clearCache() {
-		CacheController.getInstance().clearCache();
 		
-		CacheController.getInstance().getCache().cacheHit = 0;
-		CacheController.getInstance().getCache().cacheMiss = 0;
+		CacheController.getInstance().getCache().cacheClear();
 		
 		String data = "Cache cleared!";
 		

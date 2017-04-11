@@ -201,6 +201,12 @@ Response response = null;
 				response = CacheController.getInstance().getCache().getFromCacheMap(key);
 				return response;
 				
+			case "Stats":
+				String statsData = "Cache Hits = " + CacheController.getInstance().getCache().cacheHit
+				+ "\nCache Misses = " + CacheController.getInstance().getCache().cacheMiss;
+				
+				return Response.status(200).entity(statsData).build();
+				
 			default:
         	//Should be 400
 				return Response.status(400).build();

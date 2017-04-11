@@ -6,19 +6,22 @@ public class CacheController {
 
     private static CacheController instance;
     // Period should be treated as seconds. 0 implies no caching.
-    private long aceCachePeriod = 20;
-    private long allCachePeriod = 20;
-    private long archiveCachePeriod = 20;
-    private long embedCachePeriod = 20;
-    private long imagesCachePeriod = 500;
-    private long mapCachePeriod = 500;
-    private long weatherCachePeriod = 400;
-    private long locationsCachePeriod = 20;
+    private long aceCachePeriod = 6000;
+    private long allCachePeriod = 6000;
+    private long archiveCachePeriod = 12000;
+    private long embedCachePeriod = 12000;
+    private long imagesCachePeriod = 12000;
+    private long mapCachePeriod = 12000;
+    private long weatherCachePeriod = 6000;
+    private long locationsCachePeriod = 6000;
     private Cache cache;
     private HashMap<String, Long> specialTimes = new HashMap<String, Long>();
     
     private CacheController(){
     	//cache = new Cache();
+    }
+    private void initSpecialTimes(){
+    	specialTimes.put("https://api.auroras.live/v1/?type=ace&data=kp", Long.valueOf(200));
     }
     
     public static synchronized CacheController getInstance(){
@@ -27,9 +30,12 @@ public class CacheController {
         	System.out.println("Making new instance");
             instance = new CacheController();
             instance.cache = new Cache();
-            ConfigFile.getInstance().getFromConfigFile();
+            instance.initSpecialTimes();
         }
         return instance;
+    }
+    public HashMap<String, Long> getSpecialTimes(){
+    	return specialTimes;
     }
     
     public void clearCache(){

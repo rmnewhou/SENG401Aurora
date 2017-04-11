@@ -29,7 +29,7 @@ public class Cache {
 		cacheMiss++;
 	}
 	
-	public Response getFromSpecialHashMap(String key, long expiration){
+	public Response getFromSpecialHashMap(String key){
 		
 		if (specialHashMap.get(key) != null){
 			System.out.println("In special");
@@ -48,6 +48,27 @@ public class Cache {
 		}
 		// Cache doesn't exist, return null
 		incCacheMiss();
+		return null;
+	}
+	public byte[] getFromSpecialCacheMapImage(String key){
+		System.out.println("Key = " + key);
+		if (specialHashMap.get(key) != null){
+			long currentTime = Instant.now().getEpochSecond();			
+			if (specialHashMap.get(key).expirationTime < currentTime){
+				// Cache has expired, return null 
+				incCacheMiss();
+				System.out.println("Cache Miss (Expired)= " + cacheMiss);
+				return null;
+			}else{
+				// The Cache has not expired and still exists, so return the response
+				incCacheHit();
+				System.out.println("Cache Hit = " + cacheHit);
+				return specialHashMap.get(key).imageByteArr;
+			}		
+		}
+		// Cache doesn't exist, return null
+		incCacheMiss();
+		System.out.println("Cache Miss (Not found) = " + cacheMiss);
 		return null;
 	}
 	
@@ -97,8 +118,15 @@ public class Cache {
 		return null;
 	}
 	
-	public void setSpecialCacheValue(String key, Response response, String type){
-			
+	public void setSpecialCacheValue(String key, Response response){
+		CacheObject obj = new CacheObject(response, 0);
+		obj.expirationTime = Instant.now().getEpochSecond() + CacheController.getInstance().getSpecialTimes().get(key);
+    	specialHashMap.put(key, obj);
+	}
+	public void setSpecialCacheValue(String key, byte[] imageByteArr){
+		CacheObject obj = new CacheObject(imageByteArr, 0);
+		obj.expirationTime = Instant.now().getEpochSecond() + CacheController.getInstance().getSpecialTimes().get(key);
+    	specialHashMap.put(key, obj);
 	}
 	
 	public void setCacheValue(String key, Response response, String type){
@@ -161,5 +189,5 @@ public class Cache {
 
 		
 		}
-	}	
+	}	 
 }

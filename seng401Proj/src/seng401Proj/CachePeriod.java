@@ -1,5 +1,7 @@
 package seng401Proj;
 
+import java.util.Arrays;
+
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo; 
@@ -31,7 +33,8 @@ public class CachePeriod {
 			"\nImagesCachePeriod: " + String.valueOf(CacheController.getInstance().getImagesCachePeriod()) + " seconds" +
 			"\nMapCachePeriod: " + String.valueOf(CacheController.getInstance().getMapCachePeriod()) + " seconds" +
 			"\nWeatherCachePeriod: " + String.valueOf(CacheController.getInstance().getWeatherCachePeriod()) + " seconds" +
-			"\nLocationCachePeriod: " + String.valueOf(CacheController.getInstance().getLocationsCachePeriod()) + " seconds";
+			"\nLocationCachePeriod: " + String.valueOf(CacheController.getInstance().getLocationsCachePeriod()) + " seconds" +
+			"\n\nSpecial Hash Map Times: \n " + Arrays.asList(CacheController.getInstance().getSpecialTimes());
 			return Response.status(200).entity(data).build();
 		case "set":
 			String section = info.getQueryParameters().getFirst("section");

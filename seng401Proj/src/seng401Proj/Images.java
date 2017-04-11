@@ -66,15 +66,29 @@ public class Images {
 					if (noCachingParam != null && noCachingParam.equals("true")){
 						
 						// We still need to save to cache though. 
-						return getResponse(key, type);
+						return getResponse(key, type, false);
 					}else{
-
+						
+						// Check to see if the response is already in the special cache
+						if (CacheController.getInstance().getSpecialTimes().get(key) != null){
+							// Exists inside special cache
+							byte[] imageByteArr = CacheController.getInstance().getCache().getFromSpecialCacheMapImage(key);
+							if (imageByteArr == null){
+								
+								return getResponse(key, type, true);
+								
+							}else{
+								// Response
+								ByteArrayInputStream byteInputStream = new ByteArrayInputStream(imageByteArr); 
+								return Response.status(200).entity(byteInputStream).type("image/png").build();
+							}
+						}
 						// Check to see if the response is already in the cache
 						byte[] imageByteArr = CacheController.getInstance().getCache().getFromCacheMapImage(key);
 						if (imageByteArr == null){
 							
 							// We need to get response from Aurora
-							return getResponse(key, type);
+							return getResponse(key, type, false);
 						}else{
 							// Response
 							ByteArrayInputStream byteInputStream = new ByteArrayInputStream(imageByteArr); 
@@ -110,7 +124,6 @@ public class Images {
 				// Now response has been created, so return it. 
 				return response; 
 			}else{
-				
 				// Check to see if the response is already in the cache
 				Response response = CacheController.getInstance().getCache().getFromCacheMap(key);
 				if (response == null){
@@ -136,7 +149,7 @@ public class Images {
 		}
 		
 	}
-	public static Response getResponse(String key, String type) throws UnirestException, IOException{
+	public static Response getResponse(String key, String type, boolean isSpecial) throws UnirestException, IOException{
 		
 		HttpResponse<java.io.InputStream> auroraResponse = Unirest.get(key).asBinary();
 		
@@ -153,8 +166,13 @@ public class Images {
 	    
 	    byte[] byteArray = buffer.toByteArray();
 	
-		// Save the response in the cache controller. 
-		CacheController.getInstance().getCache().setCacheValue(key, byteArray, type);
+	    
+	    // Save the response in the cache controller. 
+		if (isSpecial){
+			CacheController.getInstance().getCache().setSpecialCacheValue(key, byteArray);
+		}else{
+			 CacheController.getInstance().getCache().setCacheValue(key, byteArray, type);
+		}
 		
 		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(byteArray); 
 		

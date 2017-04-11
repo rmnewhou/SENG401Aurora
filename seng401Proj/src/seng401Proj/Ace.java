@@ -28,21 +28,43 @@ public class Ace{
 		String longitude = info.getQueryParameters().getFirst("long");
 		String type = info.getQueryParameters().getFirst("type");
 		String noCachingParam = info.getQueryParameters().getFirst("no-caching");
+		boolean isSpecial = false;
 		
-		String key = "https://api.auroras.live/v1/?type=ace&data="+data+"&lat="+lattitude+"&long="+longitude;
+		String key = "https://api.auroras.live/v1/?type=ace&data="+data; 
+		if (lattitude != null){
+			key = key + "&lat=" +lattitude;
+		}
+		if (longitude != null){
+			key = key + "&long=" +longitude;
+		} 
 		
 		
 		if (noCachingParam != null && noCachingParam.equals("true")){
 			
 			// We still need to save to cache though. 
-			return getResponse(key, type);
+			return getResponse(key, type, false);
 		}else{
 			
+			// Check to see if the response is already in the special cache
+			if (CacheController.getInstance().getSpecialTimes().get(key) != null){
+				// Exists inside special cache
+				Response response = CacheController.getInstance().getCache().getFromSpecialHashMap(key);
+				if (response == null){
+					System.out.println("We are using special cache!");
+					response = getResponse(key, type, true);
+					
+					// Now response has been created, so return it. 
+					return response; 
+				}else{
+					// Response
+					return response;
+				}
+			}
 			// Check to see if the response is already in the cache
 			Response response = CacheController.getInstance().getCache().getFromCacheMap(key);
 			if (response == null){
 				
-				response = getResponse(key, type);
+				response = getResponse(key, type, false);
 	
 				// Now response has been created, so return it. 
 				return response; 
@@ -53,7 +75,7 @@ public class Ace{
 		}
 	}
 		
-		public static Response getResponse(String key, String type) throws UnirestException{
+		public static Response getResponse(String key, String type, boolean isSpecial) throws UnirestException{
 			JSONObject jsonObject = new JSONObject();
 			HttpResponse<JsonNode> response = Unirest.get(key)
 											.asJson();
@@ -65,7 +87,11 @@ public class Ace{
 			Response newResponse = Response.status(200).entity(response.getBody().toString()).build();
 			
 			// Save the response in the cache controller. 
-			CacheController.getInstance().getCache().setCacheValue(key, newResponse, type);
+			if (isSpecial){
+				CacheController.getInstance().getCache().setSpecialCacheValue(key, newResponse);
+			}else{
+				CacheController.getInstance().getCache().setCacheValue(key, newResponse, type);
+			}
 			return newResponse;
 		}
 		
