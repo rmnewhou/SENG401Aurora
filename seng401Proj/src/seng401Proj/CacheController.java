@@ -1,38 +1,32 @@
 package seng401Proj;
 
-import java.util.HashMap;
-
 public class CacheController {
 
     private static CacheController instance;
     // Period should be treated as seconds. 0 implies no caching.
-    private long aceCachePeriod = 20;
-    private long allCachePeriod = 20;
-    private long archiveCachePeriod = 20;
-    private long embedCachePeriod = 20;
-    private long imagesCachePeriod = 500;
-    private long mapCachePeriod = 500;
-    private long weatherCachePeriod = 400;
-    private long locationsCachePeriod = 20;
+    private long aceCachePeriod = 0;
+    private long allCachePeriod = 0;
+    private long archiveCachePeriod = 0;
+    private long embedCachePeriod = 0;
+    private long imagesCachePeriod = 0;
+    private long mapCachePeriod = 0;
+    private long weatherCachePeriod = 0;
     private Cache cache;
-    private HashMap<String, Long> specialTimes = new HashMap<String, Long>();
     
     private CacheController(){
-    	//cache = new Cache();
+    	cache = new Cache();
     }
     
     public static synchronized CacheController getInstance(){
         if(instance == null)
         {
-        	System.out.println("Making new instance");
             instance = new CacheController();
-            instance.cache = new Cache();
         }
         return instance;
     }
     
     public void clearCache(){
-    	clearCache();
+    	
     }
 
 	public long getAceCachePeriod() {
@@ -89,14 +83,6 @@ public class CacheController {
 
 	public void setWeatherCachePeriod(long weatherCachePeriod) {
 		this.weatherCachePeriod = weatherCachePeriod;
-	}
-	
-	public long getLocationsCachePeriod() {
-		return locationsCachePeriod;
-	}
-
-	public void setLocationsCachePeriod(long locationsCachePeriod) {
-		this.locationsCachePeriod = locationsCachePeriod;
 	}
 
 	public Cache getCache() {
